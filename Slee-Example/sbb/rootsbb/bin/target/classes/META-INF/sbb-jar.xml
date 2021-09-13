@@ -6,7 +6,7 @@
 
     <sbb id="ssesbb">
             <description>StartService</description>
-            <sbb-name>RootSbb1</sbb-name>
+            <sbb-name>RootSbb</sbb-name>
             <sbb-vendor>MetaSwitch</sbb-vendor>
             <sbb-version>1.1</sbb-version>
 
