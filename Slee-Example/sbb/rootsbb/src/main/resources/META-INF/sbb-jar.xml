@@ -1,0 +1,311 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.1//EN" "http://java.sun.com/dtd/slee-sbb-jar_1_1.dtd">
+
+<sbb-jar>
+
+    <sbb id="ssesbb">
+            <description>StartService</description>
+            <sbb-name>RootSbb1</sbb-name>
+            <sbb-vendor>MetaSwitch</sbb-vendor>
+            <sbb-version>1.1</sbb-version>
+
+        <sbb-ref>
+            <sbb-name>IncomingParticipantChildSbb</sbb-name>
+            <sbb-vendor>MetaSwitch</sbb-vendor>
+            <sbb-version>1.1</sbb-version>
+            <sbb-alias>INCOMINGSBB</sbb-alias>
+        </sbb-ref>
+
+        <sbb-ref>
+            <sbb-name>OutgoingParticipantChildSbb</sbb-name>
+            <sbb-vendor>MetaSwitch</sbb-vendor>
+            <sbb-version>1.1</sbb-version>
+            <sbb-alias>OUTGOINGSBB</sbb-alias>
+        </sbb-ref>
+
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.example.slee.sbb.rootsbb.RootSbb
+                </sbb-abstract-class-name>
+
+                <cmp-field>
+                    <cmp-field-name>incomingLeg</cmp-field-name>
+                </cmp-field>
+
+                <cmp-field>
+                    <cmp-field-name>outgoingLeg</cmp-field-name>
+                </cmp-field>
+
+                <cmp-field>
+                    <cmp-field-name>contactHeader</cmp-field-name>
+                </cmp-field>
+
+                <get-child-relation-method>
+                    <sbb-alias-ref>INCOMINGSBB</sbb-alias-ref>
+                    <get-child-relation-method-name>getIncomingParticipantChild</get-child-relation-method-name>
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+
+                <get-child-relation-method>
+                    <sbb-alias-ref>OUTGOINGSBB</sbb-alias-ref>
+                    <get-child-relation-method-name>getOutgoingParticipantChild</get-child-relation-method-name>
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+
+            </sbb-abstract-class>
+
+            <sbb-local-interface>
+                <sbb-local-interface-name>
+                    org.example.slee.sbb.local.RootSbbLocalInterface
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+
+        </sbb-classes>
+
+        <event event-direction="Receive" initial-event="True">
+            <event-name>ServiceStartedEvent</event-name>
+            <event-type-ref>
+                <event-type-name>javax.slee.serviceactivity.ServiceStartedEvent</event-type-name>
+                <event-type-vendor>javax.slee</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+        </event>
+
+        <event event-direction="Receive" initial-event="True">
+            <event-name>InitialInvite</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.message.Request.INVITE</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+        </event>
+
+<!--        <event event-direction="Receive" initial-event="False">-->
+<!--            <event-name>Ack</event-name>-->
+<!--            <event-type-ref>-->
+<!--                <event-type-name>javax.sip.Dialog.ACK</event-type-name>-->
+<!--                <event-type-vendor>net.java.slee</event-type-vendor>-->
+<!--                <event-type-version>1.2</event-type-version>-->
+<!--            </event-type-ref>-->
+<!--        </event>-->
+
+<!--        <event event-direction="Receive" initial-event="False">-->
+<!--            <event-name>Bye</event-name>-->
+<!--            <event-type-ref>-->
+<!--                <event-type-name>javax.sip.Dialog.BYE</event-type-name>-->
+<!--                <event-type-vendor>net.java.slee</event-type-vendor>-->
+<!--                <event-type-version>1.2</event-type-version>-->
+<!--            </event-type-ref>-->
+<!--        </event>-->
+
+        <env-entry>
+            <env-entry-name>sipProviderName</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>slee/resources/sipra/provider</env-entry-value>
+        </env-entry>
+
+        <env-entry>
+            <env-entry-name>sipACIFactoryName</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>slee/resources/sipra/acifactory</env-entry-value>
+        </env-entry>
+
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>OCSIP</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>OpenCloud</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>2.2</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>
+                slee/resources/sipra/acifactory
+            </activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>
+                    slee/resources/sipra/provider
+                </resource-adaptor-object-name>
+                <resource-adaptor-entity-link>
+                    OCSIP
+                </resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+
+
+    </sbb>
+
+    <sbb id="incsbb">
+
+        <description>IncomingSbb</description>
+        <sbb-name>IncomingParticipantChildSbb</sbb-name>
+        <sbb-vendor>MetaSwitch</sbb-vendor>
+        <sbb-version>1.1</sbb-version>
+
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.example.slee.sbb.rootsbb.IncomingParticipantChildSbb
+                </sbb-abstract-class-name>
+
+             <cmp-field>
+                <cmp-field-name>incomingParticipantACI</cmp-field-name>
+             </cmp-field>
+
+             <cmp-field>
+                <cmp-field-name>parent</cmp-field-name>
+             </cmp-field>
+
+            </sbb-abstract-class>
+
+            <sbb-local-interface>
+                <sbb-local-interface-name>
+                    org.example.slee.sbb.local.IncomingParticipantLocalInterface
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+
+        </sbb-classes>
+
+        <event event-direction="Receive" initial-event="False">
+            <event-name>Ack</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.Dialog.ACK</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
+            </event-type-ref>
+        </event>
+
+        <event event-direction="Receive" initial-event="False">
+            <event-name>Bye</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.Dialog.BYE</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
+            </event-type-ref>
+        </event>
+
+        <env-entry>
+            <env-entry-name>sipProviderName</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>slee/resources/sipra/provider</env-entry-value>
+        </env-entry>
+
+        <env-entry>
+            <env-entry-name>sipACIFactoryName</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>slee/resources/sipra/acifactory</env-entry-value>
+        </env-entry>
+
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>OCSIP</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>OpenCloud</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>2.2</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>
+                slee/resources/sipra/acifactory
+            </activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>
+                    slee/resources/sipra/provider
+                </resource-adaptor-object-name>
+                <resource-adaptor-entity-link>
+                    OCSIP
+                </resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+
+        </sbb>
+
+    <sbb id="outsbb">
+
+        <description>OutgoingSbb</description>
+        <sbb-name>OutgoingParticipantChildSbb</sbb-name>
+        <sbb-vendor>MetaSwitch</sbb-vendor>
+        <sbb-version>1.1</sbb-version>
+
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.example.slee.sbb.rootsbb.OutgoingParticipantChildSbb
+                </sbb-abstract-class-name>
+
+            <cmp-field>
+                <cmp-field-name>outgoingParticipantACI</cmp-field-name>
+            </cmp-field>
+
+            <cmp-field>
+                <cmp-field-name>parent</cmp-field-name>
+            </cmp-field>
+
+                <cmp-field>
+                    <cmp-field-name>outURI</cmp-field-name>
+                </cmp-field>
+
+                <cmp-field>
+                    <cmp-field-name>branch</cmp-field-name>
+                </cmp-field>
+
+
+            </sbb-abstract-class>
+
+            <sbb-local-interface>
+                <sbb-local-interface-name>
+                    org.example.slee.sbb.local.OutgoingPartcipantLocalInterface
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+
+        </sbb-classes>
+
+        <event event-direction="Receive" initial-event="False">
+            <event-name>1xxResponse</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.message.Response.PROVISIONAL</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
+            </event-type-ref>
+        </event>
+
+        <event event-direction="Receive" initial-event="False">
+            <event-name>2xxResponse</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.message.Response.SUCCESS</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
+            </event-type-ref>
+        </event>
+
+        <env-entry>
+            <env-entry-name>sipProviderName</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>slee/resources/sipra/provider</env-entry-value>
+        </env-entry>
+
+        <env-entry>
+            <env-entry-name>sipACIFactoryName</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>slee/resources/sipra/acifactory</env-entry-value>
+        </env-entry>
+
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>OCSIP</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>OpenCloud</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>2.2</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>
+                slee/resources/sipra/acifactory
+            </activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>
+                    slee/resources/sipra/provider
+                </resource-adaptor-object-name>
+                <resource-adaptor-entity-link>
+                    OCSIP
+                </resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+
+    </sbb>
+</sbb-jar>

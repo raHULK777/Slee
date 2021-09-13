@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Sample slee services" default="deploy-sample-service" basedir=".">
+    <!-- Properties and Imported files -->
+    <!--  <import file="deploy.properties"/>-->
+    <property file="deploy.properties"/>
+    <property environment="env"/>
+    <property name="client.home" value="${env.RHINO_HOME}/client"/>
+    <import file="${env.RHINO_HOME}/client/etc/common.xml" />
+
+    <target name="deploy-sample-service" description="Deploy sample service in rhino" depends="undeploy-sample-service,deploy-sip-ra,install-sample-service,activate-sample-service">
+    </target>
+
+    <target name="install-sample-service" depends="login">
+        <slee-management>
+            <install srcfile="${basedir}/services/target/jainslee/slee.services-1.0-SNAPSHOT-org.example-du.jar" url="file:slee.services-1.0.jar" />
+        </slee-management>
+    </target>
+
+    <target name="activate-sample-service" depends="login">
+        <slee-management>
+            <activateservice nodes="101">
+                <component name="SampleSLEE" vendor="TCS"  version="1.2" />
+            </activateservice>
+        </slee-management>
+    </target>
+
+    <target name="undeploy-sample-service"  depends="login">
+        <slee-management>
+            <deactivateservice nodes="101">
+                <component name="SampleSLEE" vendor="TCS" version="1.2" />
+            </deactivateservice>
+            <waittilserviceisinactive>
+                <component name="SampleSLEE" vendor="TCS" version="1.2" />
+            </waittilserviceisinactive>
+            <uninstall url="file:slee.services-1.0.jar" />
+        </slee-management>
+    </target>
+
+    <target name="deploy-jsip-ratype" depends="login">
+        <slee-management>
+            <install srcfile="${jsip.library.du}" url="file:${jsip.library.du}"/>
+            <install srcfile="${jsip.ratype.du}" url="file:${jsip.ratype.du}"/>
+        </slee-management>
+    </target>
+
+    <target name="undeploy-jsip-ratype" depends="login">
+        <slee-management>
+            <uninstall url="file:${jsip.ratype.du}"/>
+            <uninstall url="file:${jsip.library.du}"/>
+        </slee-management>
+    </target>
+
+    <target name="deploy-ocsip-ratype" depends="deploy-jsip-ratype">
+        <slee-management>
+            <install srcfile="${ocsip.ratype.du}" url="file:${ocsip.ratype.du}"/>
+        </slee-management>
+    </target>
+
+    <target name="undeploy-ocsip-ratype" depends="login">
+        <slee-management>
+            <uninstall url="file:${ocsip.ratype.du}"/>
+        </slee-management>
+    </target>
+
+    <target name="deploy-sip-ra" depends="deploy-ocsip-ratype" description="Deploy SIP resource adaptor">
+        <slee-management>
+            <install srcfile="${sip.ra.du}" url="file:${sip.ra.du}"/>
+            <createraentity entityname="${sip.ra.entity}" properties="${sip.ra.properties}">
+                <component name="${sip.ra.name}" vendor="${sip.ra.vendor}" version="${sip.ra.version}"/>
+            </createraentity>
+            <settracerlevel tracerName="root" level="${ra.tracelevel}">
+                <raentitynotificationsource entityname="${sip.ra.entity}"/>
+            </settracerlevel>
+            <bindralinkname entityname="${sip.ra.entity}" linkname="${SIP_LINKNAME}"/>
+            <activateraentity entityname="${sip.ra.entity}"/>
+        </slee-management>
+    </target>
+
+    <target name="undeploy-sip-ra" depends="login" description="Undeploy SIP resource adaptor">
+        <slee-management>
+            <deactivateraentity entityname="${sip.ra.entity}"/>
+            <unbindralinkname linkname="${SIP_LINKNAME}"/>
+            <waittilraentityisinactive entityname="${sip.ra.entity}"/>
+            <removeraentity entityname="${sip.ra.entity}"/>
+            <uninstall url="file:${sip.ra.du}"/>
+        </slee-management>
+    </target>
+
+    <target name="undeploy-ra" description="Undeploy SIP Resource Adaptor and example SIP services" depends="undeploy-sip-ra, undeploy-ocsip-ratype, undeploy-jsip-ratype"/>
+
+
+</project>
