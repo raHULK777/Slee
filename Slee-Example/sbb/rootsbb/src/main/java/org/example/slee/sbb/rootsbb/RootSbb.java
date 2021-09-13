@@ -44,8 +44,6 @@ public abstract class RootSbb implements Sbb {
             String factoryName ="java:comp/env/slee/resources/sipra/acifactory";
             sipSbbInterface = (OCSleeSipProvider) myEnv.lookup(providerName);
             sipACIFactory = (OCSipActivityContextInterfaceFactory) myEnv.lookup(factoryName);
-//            ds = (DataSource) myEnv.lookup("jdbc/SipRegistry");
-//            getJdbcConnection(ds);
         }
         catch (NamingException e) {
              tracer.severe("Could not set SBB context", e);
@@ -64,21 +62,7 @@ public abstract class RootSbb implements Sbb {
         ies.setCustomName(CUSTOM_CONVERGENCE_NAME);
         return ies;
     }
-
-//    public Connection getJdbcConnection(DataSource ds) {
-//        Connection conn=null;
-//        try {
-//            String urldb="jdbc:mysql://localhost:3306/jdb";
-//            String user="root";
-//            String password="rion";
-//            conn = ds.getConnection(password,user);
-//            tracer.info("connected successfully");
-//        }
-//        catch (SQLException e) {
-//            tracer.info("connection was failed");
-//        }
-//        return conn;
-//    }
+    
     public void onInitialInvite(RequestEvent event, ActivityContextInterface aci) {
         tracer.info("received initial invite ");
         ServerTransaction st = event.getServerTransaction();
